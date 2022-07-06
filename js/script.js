@@ -1,3 +1,8 @@
+// array todo list
+const todos = [];
+// storange name
+const STORAGE_KEY = 'TODO_APP';
+
 function generateId() {
   return +new Date();
 }
@@ -5,9 +10,6 @@ function generateId() {
 function generateTodoObj(id, title, date, isComplete) {
   return { id, title, date, isComplete };
 }
-
-// array todo list
-const todos = [];
 
 function renderTodos() {
   // get todo list
@@ -88,6 +90,7 @@ function undoTaskFromCompleted(id) {
   // change isComplete to false
   todo.isComplete = false;
   renderTodos();
+  saveData();
 }
 
 function removeTaskFromCompleted(id) {
@@ -95,6 +98,7 @@ function removeTaskFromCompleted(id) {
   todos.splice(index, 1);
 
   renderTodos();
+  saveData();
 }
 
 function addTaskToCompleted(id) {
@@ -106,6 +110,7 @@ function addTaskToCompleted(id) {
   todo.isComplete = true;
   // render Todo
   renderTodos();
+  saveData();
 }
 
 function getTodo(id) {
@@ -113,6 +118,30 @@ function getTodo(id) {
     if (todo.id === id) return todo;
   }
   return null;
+}
+
+function saveData() {
+  if (isStorangeExists()) {
+    // set localStorange
+    const string_todos = JSON.stringify(todos);
+    localStorage.setItem(STORAGE_KEY, string_todos);
+  }
+}
+
+function isStorangeExists() {
+  if (typeof Storage !== undefined) return true;
+  alert('Browser kamu tidak mendukung local storange');
+  return false;
+}
+
+function loadDataFromStorage() {
+  const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (data !== null) {
+    for (const todo of data) {
+      todos.push(todo);
+    }
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -134,5 +163,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // render todos list
     renderTodos();
+    saveData();
   });
+
+  if (isStorangeExists()) {
+    loadDataFromStorage();
+    renderTodos();
+  }
 });
