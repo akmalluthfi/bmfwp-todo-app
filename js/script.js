@@ -11,15 +11,19 @@ const todos = [];
 
 function renderTodos() {
   // get todo list
-  const uncompleteTodoList = document.getElementById('todos');
+  const uncompletedTodoList = document.getElementById('uncompleted-todos');
+  const completedTodoList = document.getElementById('completed-todos');
   // reset html todo list
-  uncompleteTodoList.innerHTML = '';
+  uncompletedTodoList.innerHTML = '';
+  completedTodoList.innerHTML = '';
   // render todo
 
   todos.forEach((todo) => {
     const todoElement = makeTodo(todo);
     if (!todo.isComplete) {
-      uncompleteTodoList.append(todoElement);
+      uncompletedTodoList.append(todoElement);
+    } else {
+      completedTodoList.append(todoElement);
     }
   });
 }
@@ -78,11 +82,19 @@ function makeTodo(todo) {
 }
 
 function undoTaskFromCompleted(id) {
-  console.log('undo');
+  // ambil todo
+  const todo = getTodo(id);
+  if (todo === null) return;
+  // change isComplete to false
+  todo.isComplete = false;
+  renderTodos();
 }
 
 function removeTaskFromCompleted(id) {
-  console.log('remove');
+  const index = todos.map((todoItem) => todoItem.id === id);
+  todos.splice(index, 1);
+
+  renderTodos();
 }
 
 function addTaskToCompleted(id) {
@@ -90,7 +102,7 @@ function addTaskToCompleted(id) {
   const todo = getTodo(id);
 
   if (todo === null) return;
-  // change isComplete
+  // change isComplete to true
   todo.isComplete = true;
   // render Todo
   renderTodos();
